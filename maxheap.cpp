@@ -15,12 +15,11 @@ class MaxHeap {
     storage_.push_back(elem);
 
     size_t idx = storage_.size() - 1;
-    while (idx != 0) {
-      size_t parent_idx = Parent(idx);
-      if (storage_[parent_idx] < storage_[idx]) {
-        std::swap(storage_[parent_idx], storage_[idx]);
-      }
+    size_t parent_idx = Parent(idx);
+    while (idx != 0 && storage_[parent_idx] < storage_[idx]) {
+      std::swap(storage_[parent_idx], storage_[idx]);
       idx = parent_idx;
+      parent_idx = Parent(idx);
     }
   }
 
