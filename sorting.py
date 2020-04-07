@@ -40,7 +40,7 @@ import random
 # Quick sort with first element in array as pivot. Works.
 class QuickSortPivotFirst(object):
   def __init__(self, array: List[int]):
-    self.array = array
+    self.array = array.copy()
 
   def partition(self, lo: int, hi: int) -> int:
     # Select a pivot and a location to store the next value from the "lesser" set.
@@ -73,5 +73,63 @@ class QuickSortPivotFirst(object):
     return self.array
 
 
-l = [random.randint(0, 10) for i in range(10)]
-print(QuickSortPivotFirst(l).sorted())
+class MergeSort(object):
+  def __init__(self, array: List[int]):
+    self.array = array.copy()
+
+  def sorted(self):
+    self.mergesort(0, len(self.array) - 1)
+    return self.array
+
+  def mergesort(self, lo, hi):
+    # Split a list into two lists.
+    split = lo + (hi - lo) // 2
+
+    # For the base case (list of length 1), do nothing (list is already sorted).
+    if (hi - lo) < 1:
+      return
+
+    # Sort the first.
+    self.mergesort(lo, split)
+    # Sort the second.
+    self.mergesort(split + 1, hi)
+    # Merge them.
+    self.merge(lo, split, hi)
+
+  def merge(self, lo1, hi1, hi2):
+    lo2 = hi1 + 1  # Assume lists are contiguous in memory.
+    # Indices we're currently examining.
+    idx1 = lo1
+    idx2 = lo2
+    # Place to write the output before copying back to the original array.
+    size_write_array = hi2 - lo1 + 1
+    write_array = []
+    for i in range(size_write_array):
+      if idx1 <= hi1 and idx2 <= hi2:
+        if self.array[idx1] < self.array[idx2]:
+          write_array.append(self.array[idx1])
+          idx1 += 1
+        else:
+          write_array.append(self.array[idx2])
+          idx2 += 1
+      else:
+        if idx1 <= hi1:
+          write_array.append(self.array[idx1])
+          idx1 += 1
+        else:
+          write_array.append(self.array[idx2])
+          idx2 += 1
+
+    # Copy back to original array.
+    assert(len(write_array) == (hi1 - lo1 + 1 + hi2 - lo2 + 1))
+    assert(len(write_array) == hi2 - lo1 + 1)
+    self.array[lo1:hi2 + 1] = write_array
+
+    return
+
+
+for i in range(100):
+  l = [random.randint(0, 10) for i in range(10)]
+  a = QuickSortPivotFirst(l).sorted()
+  b = MergeSort(l).sorted()
+  assert(a == b)
